@@ -1,5 +1,6 @@
 %yyx 20250416
 %处理isi结果，要求event事件中存在完整胡须刺激事件
+%yyx 20250417 增加平均图像差值计算start-sti
 clearvars -except data_converted
 clc;
 close all;
@@ -40,7 +41,10 @@ info_end=FunGetValidImageInfo(sti_timepoint_matrix(:,[3,4]),info,cam_event);
 avr_start=FunGetAvrImg(info_start,savepath,savename{1});
 avr_sti=FunGetAvrImg(info_sti,savepath,savename{2});
 avr_end=FunGetAvrImg(info_end,savepath,savename{3});
-%% 
+
+%% 计算均值差
+delta_start_sti=FunGetDeltaImg(avr_start,avr_sti,savepath);
+
 
 
 %%
@@ -142,4 +146,8 @@ function res_image=FunGetAvrImg(info,savename)
     res_image=img./img_num;
     imwrite(uint16(res_image),savename);
 end
-
+function delta_start_sti=FunGetDeltaImg(avr_start,avr_sti,savepath)
+    delta_start_sti=avr_start-avr_sti;
+    savefull=fullfile(savepath,'delta_start_sti.tif');
+    imwrite(uint16(delta_start_sti),savefull);
+end
