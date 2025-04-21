@@ -2,7 +2,7 @@
 %处理isi结果，要求event事件中存在完整胡须刺激事件
 %yyx 20250417 增加平均图像差值计算start-sti
 %yyx 20250418 去掉event部分，以后只需要成像开始后给胡须刺激
-%yyx 20250421 彻底去掉event
+%yyx 20250421 彻底去掉event,增加waitbar
 clearvars -except data_converted
 clc;
 close all;
@@ -141,11 +141,17 @@ function res_image=FunGetAvrImg(info,savename)
     img_temp=imread(fullfile(info(1).folder,info(1).name));
     img=zeros(size(img_temp));
     img_num=length(info);
+    % 创建进度条
+    h_wait = waitbar(0, sprintf('%s，处理进度: 0%%', savename));
     for i=1:img_num
         filename=fullfile(info(i).folder,info(i).name);
         image_buff=imread(filename);
         img=img+double(image_buff);
+        %waitbar
+        progress = i/img_num;
+        waitbar(progress, h_wait, sprintf('%s，处理进度: %d%%', savename, round(progress*100)));
     end
+    close(h_wait);
     res_image=img./img_num;
     imwrite(uint16(res_image),savename);
 end
