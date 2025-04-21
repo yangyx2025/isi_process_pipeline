@@ -121,9 +121,6 @@ function syc_data=FunLoadTDMS(tdms_filepath,tdms_filename)
 end
 
 function FunCheckData(wh_event,cam_event,info)
-%      if length(exp_event)~=2
-%          fprintf('检查到%d个event\n',length(exp_event));
-%      end
      if mod(numel(wh_event),4) ~= 0
          disp('胡须刺激事件并非4的倍数');
      end
