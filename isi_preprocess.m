@@ -2,6 +2,7 @@
 %处理isi结果，要求event事件中存在完整胡须刺激事件
 %yyx 20250417 增加平均图像差值计算start-sti
 %yyx 20250418 去掉event部分，以后只需要成像开始后给胡须刺激
+%yyx 20250421 彻底去掉event
 clearvars -except data_converted
 clc;
 close all;
@@ -23,8 +24,6 @@ savename=FunCreatSavename(savepath);
 syc_data=FunLoadTDMS(tdms_filepath,tdms_filename);
 %读取image
 info=FunLoadImage(imagepath);
-%实验开始与结束时间点
-% exp_event=FunGetEventTransitionPoint(syc_data.event,'up',voltage_th);
 %%宽场成像时间点提取
 cam_event=FunGetEventTransitionPoint(syc_data.image,'up',voltage_th);
 %胡须刺激时间点提取
@@ -111,8 +110,6 @@ function syc_data=FunLoadTDMS(tdms_filepath,tdms_filename)
         channelid = regexp(channel_name, 'ai\d+', 'match');
         channelid=channelid{1};
         switch channelid
-            case 'ai0'%event marker
-                syc_data.event=data_converted.Data.MeasuredData(i).Data;
             case 'ai1'%wide field image
                 syc_data.image=data_converted.Data.MeasuredData(i).Data;
             case 'ai3'%whisker
