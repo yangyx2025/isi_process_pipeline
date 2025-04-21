@@ -1,15 +1,16 @@
 %yyx 20250416
 %处理isi结果，要求event事件中存在完整胡须刺激事件
 %yyx 20250417 增加平均图像差值计算start-sti
+%yyx 20250418 去掉event部分，以后只需要成像开始后给胡须刺激
 clearvars -except data_converted
 clc;
 close all;
-addpath('general function')
+FunAddPath()
 disp('=== ISI图像处理ing ===');
 %% 修改参数
 
-imagepath='D:\yyx\cam\20240930\06\image';
-tdms_filepath='\\DISKSATION\homes\Yangyx\temp';
+imagepath='\\DISKSATION\homes\Yangyx\temp\m1229\isi01\image';
+tdms_filepath='\\DISKSATION\homes\Yangyx\temp\m1229\isi01\syc';
 tdms_filename='isi01_conv.tdms';
 
 voltage_th=2.5;%电压阈值
@@ -29,7 +30,7 @@ cam_event=FunGetEventTransitionPoint(syc_data.image,'up',voltage_th);
 %胡须刺激时间点提取
 wh_event=FunGetEventTransitionPoint(syc_data.wh,'up&down',voltage_th);
 %校验数据
-FunCheckData(exp_event,wh_event,cam_event,info);%检查可能存在的问题
+FunCheckData(wh_event,cam_event,info);%检查可能存在的问题
 disp('检查是否存在问题，无问题可继续运行');
 keyboard
 %% 根据数据同步和任务结构进行图像归类
@@ -38,9 +39,9 @@ info_start=FunGetValidImageInfo(sti_timepoint_matrix(:,[1,2]),info,cam_event);
 info_sti=FunGetValidImageInfo(sti_timepoint_matrix(:,[2,3]),info,cam_event);
 info_end=FunGetValidImageInfo(sti_timepoint_matrix(:,[3,4]),info,cam_event);
 %% 计算均值
-avr_start=FunGetAvrImg(info_start,savepath,savename{1});
-avr_sti=FunGetAvrImg(info_sti,savepath,savename{2});
-avr_end=FunGetAvrImg(info_end,savepath,savename{3});
+avr_start=FunGetAvrImg(info_start,savename{1});
+avr_sti=FunGetAvrImg(info_sti,savename{2});
+avr_end=FunGetAvrImg(info_end,savename{3});
 
 %% 计算均值差
 delta_start_sti=FunGetDeltaImg(avr_start,avr_sti,savepath);
@@ -48,6 +49,11 @@ delta_start_sti=FunGetDeltaImg(avr_start,avr_sti,savepath);
 
 
 %%
+function FunAddPath()
+    script_full_path=mfilename('fullpath');
+    [scriptpath, ~, ~] = fileparts(script_full_path);
+    addpath(fullfile(scriptpath,'function'));
+end
 function savename = FunCreatSavename(savepath)
     % 定义文件名前缀
     basenames = {'isi_start', 'isi_sti', 'isi_end'};
@@ -117,10 +123,10 @@ function syc_data=FunLoadTDMS(tdms_filepath,tdms_filename)
     end
 end
 
-function FunCheckData(exp_event,wh_event,cam_event,info)
-     if length(exp_event)~=2
-         fprintf('检查到%d个event\n',length(exp_event));
-     end
+function FunCheckData(wh_event,cam_event,info)
+%      if length(exp_event)~=2
+%          fprintf('检查到%d个event\n',length(exp_event));
+%      end
      if mod(numel(wh_event),4) ~= 0
          disp('胡须刺激事件并非4的倍数');
      end
