@@ -62,7 +62,7 @@ function savename = FunCreatSavename(savepath)
     % 遍历每个前缀，并生成完整的文件名
     for i = 1:numel(basenames)
         % 构建文件名，如: 'isi_start_2025-04-16-16-30.tif'
-        filename = sprintf('%s_%s.tif', basenames{i}, timestampstr);
+        filename = sprintf('%s-%s.tif', basenames{i}, timestampstr);
         % 生成完整路径
         savename{i} = fullfile(savepath, filename);
     end
