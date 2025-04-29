@@ -10,9 +10,9 @@ FunAddPath()
 disp('=== ISI图像处理ing ===');
 %% 修改参数
 
-imagepath='\\DISKSATION\homes\Yangyx\temp\m1229\isi01\image';
-tdms_filepath='\\DISKSATION\homes\Yangyx\temp\m1229\isi01\syc';
-tdms_filename='isi01_conv.tdms';
+imagepath='M:\m0728\isi\20240919_m0728\isi\01\image';
+tdms_filepath='M:\m0728\isi\20240919_m0728\isi\01\syc';
+tdms_filename='01_conv.tdms';
 
 voltage_th=2.5;%电压阈值
 %% 文件系统预处理
@@ -55,7 +55,7 @@ function FunAddPath()
 end
 function savename = FunCreatSavename(savepath)
     % 定义文件名前缀
-    basenames = {'isi_start', 'isi_sti', 'isi_end'};
+    basenames = {'isi-start', 'isi-sti', 'isi-end'};
     savename = cell(numel(basenames), 1);
     % 生成统一的时间戳字符串（格式为 yyyy-MM-dd-HH-mm）
     timestampstr = datestr(now, 'yyyy-mm-dd-HH-MM');
@@ -135,18 +135,22 @@ function info=FunLoadImage(imagepath)
 end
 
 function res_image=FunGetAvrImg(info,savename)
+    %拆分savename，只保留文件名
+    [~,name,ext] = fileparts(savename); 
+    str=strcat(name,ext);
+
     img_temp=imread(fullfile(info(1).folder,info(1).name));
     img=zeros(size(img_temp));
     img_num=length(info);
     % 创建进度条
-    h_wait = waitbar(0, sprintf('%s，处理进度: 0%%', savename));
+    h_wait = waitbar(0, sprintf('%s，处理进度: 0%%', str));
     for i=1:img_num
         filename=fullfile(info(i).folder,info(i).name);
         image_buff=imread(filename);
         img=img+double(image_buff);
         %waitbar
         progress = i/img_num;
-        waitbar(progress, h_wait, sprintf('%s，处理进度: %d%%', savename, round(progress*100)));
+        waitbar(progress, h_wait, sprintf('%s，处理进度: %d%%', str, round(progress*100)));
     end
     close(h_wait);
     res_image=img./img_num;
