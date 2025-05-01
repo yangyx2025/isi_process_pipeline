@@ -10,8 +10,8 @@ FunAddPath()
 disp('=== ISI图像处理ing ===');
 %% 修改参数
 
-imagepath='M:\m0728\isi\20240919_m0728\isi\01\image';
-tdms_filepath='M:\m0728\isi\20240919_m0728\isi\01\syc';
+imagepath='M:\m0728\isi\20240929_m0728\01\image';
+tdms_filepath='M:\m0728\isi\20240929_m0728\01\syc';
 tdms_filename='01_conv.tdms';
 
 voltage_th=2.5;%电压阈值
@@ -51,7 +51,13 @@ delta_start_sti=FunGetDeltaImg(avr_start,avr_sti,savepath);
 function FunAddPath()
     script_full_path=mfilename('fullpath');
     [scriptpath, ~, ~] = fileparts(script_full_path);
-    addpath(fullfile(scriptpath,'function'));
+    function_folder=fullfile(scriptpath,'function');
+    if isfolder(function_folder)
+        addpath(genpath(function_folder));
+        fprintf('Added folder to path: %s\n', function_folder);
+    else
+        error('未发现function文件夹: %s', helperFolder);
+    end
 end
 function savename = FunCreatSavename(savepath)
     % 定义文件名前缀
